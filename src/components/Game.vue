@@ -62,10 +62,11 @@ export default {
     toggleGame () {
       if (this.cycleInterval) {
         clearInterval(this.cycleInterval)
+        this.cycleInterval = null
       } else {
         var self = this
-        setInterval(function () {
-          self.cycleInterval = self.$store.dispatch('cycle')
+        self.cycleInterval = setInterval(function () {
+          self.$store.dispatch('cycle')
         }, 1000)
       }
     },
