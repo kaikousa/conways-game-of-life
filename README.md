@@ -1,4 +1,4 @@
-# new-life
+# Conway's Game of Life with Vue.js
 
 ## Project setup
 ```
