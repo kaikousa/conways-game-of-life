@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import filter from 'lodash/filter'
 import clone from 'lodash/clone'
+import forEach from 'lodash/forEach'
 
 Vue.use(Vuex)
 
@@ -48,48 +49,41 @@ export default new Vuex.Store({
     cycle (context) {
       var start = new Date()
 
-      var transitionToLife = []
-      var transitionToDeath = []
+      var transitions = []
 
       // Sweep through the grid and determine next states for each cell
       for (var y = 0; y < context.state.grid.rows.length; y++) {
         var row = context.state.grid.rows[y]
         for (var x = 0; x < row.length; x++) {
           var cell = row[x]
+          var alive = liveNeighbours(context.state.grid, cell)
+
           if (cell.alive) {
-            var alive = liveNeighbours(context.state.grid, cell)
-            if (alive.length < 2) {
-              // dies of underpopulation
-              transitionToDeath.push(cell)
-            } else if (alive.length === 2 || alive.length === 3) {
-              // lives
-            } else if (alive.length > 3) {
-              // dies of overpopulation
-              transitionToDeath.push(cell)
+            if (alive.length < 2 || alive.length > 3) {
+              // dies of underpopulation or overpopulation
+              transitions.push({
+                cell: cell,
+                alive: false
+              })
             }
           } else {
-            var alive = liveNeighbours(context.state.grid, cell)
             if (alive.length === 3) {
               // becomes alive from reproduction
-              transitionToLife.push(cell)
+              transitions.push({
+                cell: cell,
+                alive: true
+              })
             }
           }
         }
       }
 
       // Transition state between life-death
-
-      for (var i = 0; i < transitionToLife.length; i++) {
-        var copy = clone(transitionToLife[i])
-        copy.alive = true
+      forEach(transitions, (t) => {
+        var copy = clone(t.cell)
+        copy.alive = t.alive
         context.commit('updateCell', copy)
-      }
-
-      for (var j = 0; j < transitionToDeath.length; j++) {
-        var copy = clone(transitionToDeath[j])
-        copy.alive = false
-        context.commit('updateCell', copy)
-      }
+      })
 
       var end = new Date()
 
