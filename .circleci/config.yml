@@ -1,0 +1,50 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:7.10
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: yarn build
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - "*"
+  deploy:
+    docker:
+      - image: kaikousa/awscli:latest
+    working_directory: /tmp/dist
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - run: aws s3 sync . s3://conway.kaikousa.com --exclude "index.html"
+      - run: aws s3 cp index.html s3://conway.kaikousa.com/index.html --cache-control max-age=300
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
