@@ -39,6 +39,9 @@ export default new Vuex.Store({
       // Transition state between life-death
       forEach(transitions, (t) => {
         var copy = clone(t.cell)
+        if (copy.alive) {
+          copy.aliveBefore = true
+        }
         copy.alive = t.alive
         context.commit('updateCell', copy)
       })

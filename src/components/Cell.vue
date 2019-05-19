@@ -13,7 +13,8 @@ export default {
     style () {
       return {
         dead: !this.cell.alive,
-        living: this.cell.alive
+        living: this.cell.alive,
+        'alive-before': !this.cell.alive && this.cell.aliveBefore
       }
     }
   },
@@ -42,10 +43,14 @@ export default {
 }
 
 .living{
-  background: #D0D0D0;
+  background: #A1A1A1;
 }
 
 .dead{
   background: #FFFFFF;
+}
+
+.alive-before{
+  background: #F7F3F3
 }
 </style>

@@ -13,7 +13,8 @@ export function buildGrid (maxX, maxY) {
       grid.rows[x][y] = {
         row: x,
         cell: y,
-        alive: false
+        alive: false,
+        aliveBefore: false
       }
     }
   }
