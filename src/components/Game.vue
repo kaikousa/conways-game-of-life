@@ -48,7 +48,8 @@ export default {
 
     averageCycle () {
       if (this.$store.state.cycleLog.length > 0) {
-        return mean(this.$store.state.cycleLog)
+        var avg = mean(this.$store.state.cycleLog)
+        return Math.round(avg * 100) / 100
       } else {
         return 0
       }
