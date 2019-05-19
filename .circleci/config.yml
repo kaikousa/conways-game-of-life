@@ -34,7 +34,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/dist
-      - run: aws s3 sync . s3://conway.kaikousa.com --exclude "index.html"
+      - run: aws s3 sync . s3://conway.kaikousa.com --exclude "index.html" --cache-control max-age=86400
       - run: aws s3 cp index.html s3://conway.kaikousa.com/index.html --cache-control max-age=300
 
 workflows:
