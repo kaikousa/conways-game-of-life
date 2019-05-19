@@ -25,8 +25,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    buildGrid (context) {
-      var grid = game.buildGrid(20, 20)
+    buildGrid (context, gridSize) {
+      var grid = game.buildGrid(gridSize.x, gridSize.y)
 
       context.commit('setGrid', grid)
     },

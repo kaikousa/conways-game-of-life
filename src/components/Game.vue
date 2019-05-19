@@ -1,25 +1,33 @@
 <template>
-  <div class="grid-container">
-    <div class="row" v-for="(row, index) in grid.rows" v-bind:key="index">
-      <cell v-for="(cell, index) in row" :cell="cell" v-bind:key="index" />
-    </div>
-
+  <div>
     <div class="controls">
-      <button v-on:click="toggleGame()">
-        <span v-if="playing">
-          Stop
-        </span>
-        <span v-else>
-          Start
-        </span>
-      </button>
+      <input v-model="gridSize.x" placeholder="Grid x" /> x
+      <input v-model="gridSize.y" placeholder="Grid y" />
+      <button v-on:click="updateGrid()">Update</button>
 
-      <button v-on:click="cycle()">Cycle</button>
+      <div>
+        <button v-on:click="toggleGame()">
+          <span v-if="playing">
+            Stop
+          </span>
+          <span v-else>
+            Start
+          </span>
+        </button>
+
+        <button v-on:click="cycle()">Cycle</button>
+      </div>
     </div>
 
     <div class="stats">
       <p>Cycles {{ cycles }}</p>
       <p>Average cycle {{ averageCycle }} ms</p>
+    </div>
+
+    <div class="grid-container">
+      <div class="row" v-for="(row, index) in grid.rows" v-bind:key="index">
+        <cell v-for="(cell, index) in row" :cell="cell" v-bind:key="index" />
+      </div>
     </div>
   </div>
 </template>
@@ -34,7 +42,11 @@ export default {
   components: { Cell },
   data: function () {
     return {
-      cycleInterval: null
+      cycleInterval: null,
+      gridSize: {
+        x: 20,
+        y: 20
+      }
     }
   },
   computed: {
@@ -61,15 +73,31 @@ export default {
   },
   methods: {
     toggleGame () {
-      if (this.cycleInterval) {
-        clearInterval(this.cycleInterval)
-        this.cycleInterval = null
+      if (this.playing) {
+        this.stopGame()
       } else {
-        var self = this
-        self.cycleInterval = setInterval(function () {
-          self.$store.dispatch('cycle')
-        }, 1000)
+        this.startGame()
       }
+    },
+
+    stopGame () {
+      clearInterval(this.cycleInterval)
+      this.cycleInterval = null
+    },
+
+    startGame () {
+      var self = this
+      self.cycleInterval = setInterval(function () {
+        self.$store.dispatch('cycle')
+      }, 500)
+    },
+
+    updateGrid () {
+      if (this.playing) {
+        this.stopGame()
+      }
+
+      this.$store.dispatch('buildGrid', this.gridSize)
     },
 
     cycle () {
@@ -77,7 +105,7 @@ export default {
     }
   },
   mounted: function () {
-    this.$store.dispatch('buildGrid')
+    this.$store.dispatch('buildGrid', this.gridSize)
   }
 }
 </script>
@@ -86,12 +114,12 @@ export default {
 .grid-container{
   height: 100%;
   width: 100%;
-}
 
-.row{
-  margin: 0;
-  padding: 0;
-  border: 0;
-  line-height: 0;
+  .row{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    line-height: 0;
+  }
 }
 </style>
