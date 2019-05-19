@@ -15,7 +15,7 @@
           </span>
         </button>
 
-        <button v-on:click="cycle()">Cycle</button>
+        <button v-on:click="clear()">Clear</button>
       </div>
     </div>
 
@@ -100,8 +100,9 @@ export default {
       this.$store.dispatch('buildGrid', this.gridSize)
     },
 
-    cycle () {
-      this.$store.dispatch('cycle')
+    clear () {
+      this.updateGrid()
+      this.$store.commit('clearCycleLog')
     }
   },
   mounted: function () {

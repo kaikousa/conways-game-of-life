@@ -20,6 +20,10 @@ export default new Vuex.Store({
       state.cycleLog.push(cycle)
     },
 
+    clearCycleLog (state) {
+      state.cycleLog = []
+    },
+
     updateCell (state, cell) {
       Object.assign(state.grid.rows[cell.row][cell.cell], cell)
     }
